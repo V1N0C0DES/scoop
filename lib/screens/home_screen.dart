@@ -1,7 +1,12 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_iconly/flutter_iconly.dart';
 import 'package:provider/provider.dart';
+import 'package:scoop/consts/variables.dart';
 import 'package:scoop/widgets/drawer_widget.dart';
+import 'package:scoop/widgets/horrizontal_spacing.dart';
+import 'package:scoop/widgets/tabs.dart';
 
 import '../providers/theme_provider.dart';
 import '../services/utils.dart';
@@ -14,6 +19,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  var newsType = NewsType.allNews;
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
@@ -45,30 +51,97 @@ class _HomeScreenState extends State<HomeScreen> {
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      themeProvider.setDarkTheme = !themeProvider.getDarkTheme;
+                  TabsWidget(
+                    text: 'All News',
+                    color: newsType == NewsType.allNews
+                        ? Theme.of(context).cardColor
+                        : Colors.transparent,
+                    function: () {
+                      if (newsType == NewsType.allNews) {
+                        return;
+                      }
+                      setState(() {
+                        newsType = NewsType.allNews;
+                      });
                     },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).cardColor,
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'All News',
-                          style: TextStyle(
-                              color: color,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
+                    fontSize: newsType == NewsType.allNews ? 24 : 16,
+                    fontWeight: newsType == NewsType.allNews
+                        ? FontWeight.bold
+                        : FontWeight.normal,
+                  ),
+                  const HorrizontalSpacing(12),
+                  TabsWidget(
+                    text: 'Top Trending',
+                    color: newsType == NewsType.topTrending
+                        ? Theme.of(context).cardColor
+                        : Colors.transparent,
+                    function: () {
+                      if (newsType == NewsType.topTrending) {
+                        return;
+                      }
+                      setState(() {
+                        newsType = NewsType.topTrending;
+                      });
+                    },
+                    fontSize: newsType == NewsType.topTrending ? 24 : 16,
+                    fontWeight: newsType == NewsType.topTrending
+                        ? FontWeight.bold
+                        : FontWeight.normal,
                   ),
                 ],
               ),
             ),
+            Expanded(
+              child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: 20,
+                  itemBuilder: (context, index) {
+                    return Container(
+                      margin: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        color: Theme.of(context).cardColor,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.2),
+                            spreadRadius: 1,
+                            blurRadius: 1,
+                            offset: const Offset(
+                                0, 1), // changes position of shadow
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                //List tiles
+                                Expanded(
+                                  child: ListTile(
+                                    title: Text(
+                                      'John Doe',
+                                      style: TextStyle(
+                                        color: color,
+                                      ),
+                                    ),
+                                    subtitle: Text(
+                                      '2 hours ago',
+                                      style: TextStyle(
+                                        color: color,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }),
+            )
           ],
         ),
       ),
